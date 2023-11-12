@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        .spacer {
+            margin-top: 20px; /* Adjust the value as needed for your design */
+        }
+    </style>
+</head>
+<body>
+    <div id="admin-container">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome back, {{ username }}!</p>
+        <a href="{{ url_for('restricted_page') }}">Go to Restricted Area</a>
+        <div class="spacer"></div>
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</body>
+</html>

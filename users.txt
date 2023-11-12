@@ -1,0 +1,12 @@
+Viewer:
+Username: r.cockshutt
+Password: Foo_b_ar123!
+
+Editor:
+Login: t.hunnicutt
+Password: Foo_b_ar123!
+
+Admin:
+user: t.owen
+Passwor: Foo_b_ar123!
+
