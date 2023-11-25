@@ -1,0 +1,48 @@
+apiVersion: kiali.io/v1alpha1
+kind: Kiali
+metadata:
+  annotations:
+    ansible.sdk.operatorframework.io/verbosity: "1"
+    meta.helm.sh/release-name: kiali-operator
+    meta.helm.sh/release-namespace: kiali-operator
+  labels:
+    app: kiali-operator
+    app.kubernetes.io/instance: kiali-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kiali-operator
+    app.kubernetes.io/part-of: kiali-operator
+    app.kubernetes.io/version: v1.76.0
+    helm.sh/chart: kiali-operator-1.76.0
+    version: v1.76.0
+  name: kiali
+  namespace: istio-system
+spec:
+  auth:
+    openid:
+      client_id: kiali-oauth
+      disable_rbac: true
+      insecure_skip_verify_tls: true
+      issuer_uri: http://10.100.100.100:8080/realms/infra
+      scopes: ["openid", "profile", "email"]
+      username_claim: preferred_username
+    strategy: openid
+  deployment:
+    accessible_namespaces:
+    - '**'
+    logger:
+      log_level: debug
+    external_services:
+      custom_dashboards:
+        enabled: true
+      grafana:
+        url: http://grafana.example.local
+    server:
+      port: 20001
+      web_fqdn: ""
+      web_port: "80"
+      web_root: /kiali
+      web_schema: http
+    # virtualService:
+    #   enabled: false
+    #   host: kiali.example.local
+    #   oauth: true

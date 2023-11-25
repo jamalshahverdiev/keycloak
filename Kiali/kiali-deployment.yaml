@@ -1,0 +1,149 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kiali
+    app.kubernetes.io/instance: kiali
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kiali
+    app.kubernetes.io/part-of: kiali
+    app.kubernetes.io/version: v1.72.0
+    helm.sh/chart: kiali-1.72.0
+    version: v1.72.0
+  name: kiali
+  namespace: istio-system
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: kiali
+      app.kubernetes.io/name: kiali
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config: 03e26d80280c90569ae1ef60c6cf817c171f1c2ecfe0e8e3373faa330dec7310
+        kiali.io/dashboards: go,kiali
+        prometheus.io/port: "9090"
+        prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "true"
+      creationTimestamp: null
+      labels:
+        app: kiali
+        app.kubernetes.io/instance: kiali
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: kiali
+        app.kubernetes.io/part-of: kiali
+        app.kubernetes.io/version: v1.72.0
+        helm.sh/chart: kiali-1.72.0
+        team: cloud
+        version: v1.72.0
+      name: kiali
+    spec:
+      containers:
+      - command:
+        - /opt/kiali/kiali
+        - -config
+        - /kiali-configuration/config.yaml
+        env:
+        - name: ACTIVE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: LOG_LEVEL
+          value: info
+        - name: LOG_FORMAT
+          value: text
+        - name: LOG_TIME_FIELD_FORMAT
+          value: 2006-01-02T15:04:05Z07:00
+        - name: LOG_SAMPLER_RATE
+          value: "1"
+        image: quay.io/kiali/kiali:v1.72.0
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /kiali/healthz
+            port: api-port
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: kiali
+        ports:
+        - containerPort: 20001
+          name: api-port
+          protocol: TCP
+        - containerPort: 9090
+          name: http-metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /kiali/healthz
+            port: api-port
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2000Mi
+          requests:
+            cpu: 30m
+            memory: 300Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /kiali-configuration
+          name: kiali-configuration
+        - mountPath: /kiali-cert
+          name: kiali-cert
+        - mountPath: /kiali-secret
+          name: kiali-secret
+        - mountPath: /kiali-cabundle
+          name: kiali-cabundle
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccount: kiali
+      serviceAccountName: kiali
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: kiali
+        name: kiali-configuration
+      - name: kiali-cert
+        secret:
+          defaultMode: 420
+          optional: true
+          secretName: istio.kiali-service-account
+      - name: kiali-secret
+        secret:
+          defaultMode: 420
+          optional: true
+          secretName: kiali
+      - configMap:
+          defaultMode: 420
+          name: kiali-cabundle
+          optional: true
+        name: kiali-cabundle
