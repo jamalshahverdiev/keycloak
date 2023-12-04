@@ -10,3 +10,8 @@ Admin:
 user: t.owen
 Passwor: Foo_b_ar123!
 
+====================================
+Clear:
+User: s.scamwell
+Pass: Foo_b_ar123!
+
