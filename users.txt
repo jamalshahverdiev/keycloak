@@ -12,6 +12,15 @@ Passwor: Foo_b_ar123!
 
 ====================================
 Clear:
-User: s.scamwell
+User: c.scamwell
+Pass: Foo_b_ar123!
+
+User: c.hardingham
+Pass: Foo_b_ar123!
+
+User: d.embra
+Pass: Foo_b_ar123!
+
+User: t.culley
 Pass: Foo_b_ar123!
 
