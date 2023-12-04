@@ -7,6 +7,7 @@ ff02::2 ip6-allrouters
 172.17.0.2      d7e16d20fa08
 192.168.184.160 argocd.cluster.dom
 192.168.184.160 grafana.example.local
+192.168.184.160 vault.example.local
 192.168.184.161 kiali.example.local
 
 ############# Users

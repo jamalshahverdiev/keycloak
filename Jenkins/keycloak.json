@@ -1,0 +1,10 @@
+{
+    "realm": "infra",
+    "auth-server-url": "http://10.100.100.100:8080/",
+    "ssl-required": "external",
+    "resource": "jenkins",
+    "credentials": {
+      "secret": "qYdAwSxDQVKkcEmPUbVYHvA85rYzJ0w6"
+    },
+    "confidential-port": 0
+  }
