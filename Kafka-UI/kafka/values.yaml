@@ -1,0 +1,12 @@
+kraft:
+  enabled: false
+
+zookeeper:
+  enabled: true
+  replicaCount: 3
+
+controller:
+  replicaCount: 0
+
+broker:
+  replicaCount: 3
