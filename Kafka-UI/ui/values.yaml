@@ -1,0 +1,88 @@
+yamlApplicationConfig:
+  kafka:
+    clusters:
+      - name: clusters
+        bootstrapServers: kafka-cluster-kafka-bootstrap:9092
+  auth:
+    type: OAUTH2
+    oauth2:
+      client:
+        keycloak:
+          clientId: kafka-ui
+          clientSecret: tZb3WFqfEVDun2VW6B6fUxrBS8u1FdYO
+          scope: openid
+          issuer-uri: http://10.100.100.100:8080/realms/infra
+          user-name-attribute: preferred_username
+          client-name: keycloak
+          provider: keycloak
+          custom-params:
+            type: oauth
+            roles-field: groups
+  management:
+    health:
+      ldap:
+        enabled: false
+  rbac:
+    enabled: true
+    roles:
+    - name: "admins"
+      clusters:
+        - clusters
+      subjects:
+        - provider: oauth
+          type: role
+          value: "Admin"
+      permissions:
+        - resource: applicationconfig
+          actions: ["view", "edit", "create", "delete"]
+      
+        - resource: clusterconfig
+          actions: ["view", "edit", "create", "delete"]
+
+        - resource: topic
+          value: ".*"
+          actions: ["view", "edit", "create", "delete"]
+
+        - resource: consumer
+          value: ".*"
+          actions: ["view", "edit", "create", "delete"]
+
+        - resource: schema
+          value: ".*"
+          actions: ["view", "edit", "create", "delete"]
+
+        - resource: connect
+          value: ".*"
+          actions: ["view", "edit", "create", "delete"]
+
+        - resource: ksql
+          actions: ["view", "edit", "create", "delete"]
+    - name: "readonly"
+      clusters:
+        - clusters
+      subjects:
+        - provider: oauth
+          type: role
+          value: "Viewer"
+
+      permissions:
+        - resource: clusterconfig
+          actions: [ "view" ]
+
+        - resource: topic
+          value: ".*"
+          actions: 
+            - VIEW
+            - MESSAGES_READ
+
+        - resource: consumer
+          value: ".*"
+          actions: [ "view" ]
+
+        - resource: schema
+          value: ".*"
+          actions: [ "view" ]
+
+        - resource: connect
+          value: ".*"
+          actions: [ "view" ]

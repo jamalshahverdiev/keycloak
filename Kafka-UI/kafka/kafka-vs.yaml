@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: kafka-ui
+  namespace: kafka
+spec:
+  gateways:
+  - istio-system/global-gateway
+  hosts:
+  - kafka-ui.example.local
+  http:
+  - route:
+    - destination:
+        host: kafka-ui.kafka.svc.cluster.local
+        port:
+          number: 80
