@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: oauth2-proxy
+  namespace: istio-system
+spec:
+  gateways:
+  - istio-system/global-gateway
+  hosts:
+  - oauth2-proxy.example.local
+  http:
+  - route:
+    - destination:
+        host: oauth2-proxy.istio-system.svc.cluster.local
+        port:
+          number: 4180

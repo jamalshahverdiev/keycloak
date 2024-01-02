@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2-proxy
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        app: oauth2-proxy
+    spec:
+      containers:
+      - name: oauth2-proxy
+        image: bitnami/oauth2-proxy:latest
+        ports:
+        - containerPort: 4180
+        env:
+        - name: OAUTH2_PROXY_CLIENT_ID
+          value: "oauth2-proxy"
+        - name: OAUTH2_PROXY_CLIENT_SECRET
+          value: "3mQ0Sx9h3fCDdDHtAGufXgV6GmI3qQRs"
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          value: "BFYA2xp5-lsyDiJoDMjiR4SqPdEkIuGfjkuEnWLVBXI"
+        - name: OAUTH2_PROXY_PROVIDER
+          value: "keycloak-oidc"
+        - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+          value: "http://10.100.100.100:8080/realms/infra"
+        - name: OAUTH2_PROXY_REDIRECT_URL
+          value: "http://zipkin.example.local/oauth2/callback"
+        - name: OAUTH2_PROXY_INSECURE_OIDC_ALLOW_UNVERIFIED_EMAIL
+          value: "true"
+        - name: OAUTH2_PROXY_SHOW_DEBUG_ON_ERROR
+          value: "true"
+        - name: OAUTH2_PROXY_WHITELIST_DOMAINS
+          value: "*"
+        - name: OAUTH2_PROXY_REDEEM_URL
+          value: "http://10.100.100.100:8080/realms/infra"
+        - name: OAUTH2_PROXY_PROFILE_URL
+          value: "http://10.100.100.100:8080/realms/infra/protocol/openid-connect/userinfo"
+        - name: OAUTH2_PROXY_VALIDATE_URL
+          value: "http://10.100.100.100:8080/realms/infra/protocol/openid-connect/userinfo"
+        - name: OAUTH2_PROXY_SCOPE
+          value: "openid email profile"
+        - name: OAUTH2_PROXY_PASS_HOST_HEADER
+          value: "true"
+        - name: OAUTH2_PROXY_PASS_ACCESS_TOKEN
+          value: "true"
+        - name: OAUTH2_PROXY_PASS_AUTHORIZATION_HEADER
+          value: "true"
+        - name: OAUTH2_PROXY_REVERSE_PROXY
+          value: "true"
+        - name: OAUTH2_PROXY_COOKIE_HTTPONLY
+          value: "true"
+        - name: OAUTH2_PROXY_COOKIE_REFRESH
+          value: "4m"
+        - name: OAUTH2_PROXY_COOKIE_SECURE
+          value: "false"
+        - name: OAUTH2_PROXY_COOKIE_EXPIRE
+          value: "24h"
+        - name: OAUTH2_PROXY_EMAIL_DOMAINS
+          value: "*"
+        - name: OAUTH2_PROXY_STANDARD_LOGGING
+          value: "true"
+        - name: OAUTH2_PROXY_REQUEST_LOGGING
+          value: "true"
+        - name: OAUTH2_PROXY_AUTH_LOGGING
+          value: "true"
+        - name: OAUTH2_PROXY_SET_AUTHORIZATION_HEADER
+          value: "true"
+        - name: OAUTH2_PROXY_SET_XAUTHREQUEST
+          value: "true"
+        - name: OAUTH2_PROXY_SILENCE_PING_LOGGING
+          value: "true"
+        - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
+          value: "true"
+        - name: OAUTH2_PROXY_SKIP_AUTH_STRIP_HEADERS
+          value: "false"
+        - name: OAUTH2_PROXY_SKIP_JWT_BEARER_TOKENS
+          value: "true"
+        - name: OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY
+          value: "true"
+
+

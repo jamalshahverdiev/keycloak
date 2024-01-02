@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nginx
+  namespace: istio-system
+spec:
+  gateways:
+  - istio-system/global-gateway
+  hosts:
+  - zipkin.example.local
+  http:
+  - route:
+    - destination:
+        host: nginx.istio-system.svc.cluster.local
+        port:
+          number: 80

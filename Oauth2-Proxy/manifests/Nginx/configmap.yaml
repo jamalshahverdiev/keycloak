@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: istio-system
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        resolver 10.233.0.3 valid=5s;
+        proxy_buffer_size   128k;
+        proxy_buffers   4 256k;
+        proxy_busy_buffers_size   256k;
+
+        server {
+            listen 80;
+            
+            set $oauth2_proxy_uri oauth2-proxy.istio-system.svc.cluster.local:4180;
+            set $upstream_uri zipkin.istio-system.svc.cluster.local:9411;
+            
+            location /oauth2/ {
+                proxy_pass       http://$oauth2_proxy_uri;
+                proxy_set_header Host                    $host;
+                proxy_set_header X-Real-IP               $remote_addr;
+                proxy_set_header X-Scheme                $scheme;
+                proxy_set_header X-Auth-Request-Redirect $request_uri;
+            }
+
+            location /oauth2/auth {
+                internal;
+                proxy_pass http://$oauth2_proxy_uri;
+
+                proxy_set_header Host             $host;
+                proxy_set_header X-Real-IP        $remote_addr;
+                proxy_set_header X-Scheme         $scheme;
+                proxy_set_header Content-Length   "";
+                proxy_pass_request_body           off;
+            }
+
+            location / {
+                auth_request /oauth2/auth;
+                error_page 401 = /oauth2/sign_in;
+                auth_request_set $user   $upstream_http_x_auth_request_user;
+                auth_request_set $email  $upstream_http_x_auth_request_email;
+                proxy_set_header X-User  $user;
+                proxy_set_header X-Email $email;
+
+                auth_request_set $token  $upstream_http_x_auth_request_access_token;
+                proxy_set_header X-Access-Token $token;
+
+                auth_request_set $auth_cookie $upstream_http_set_cookie;
+                add_header Set-Cookie $auth_cookie;
+
+                auth_request_set $auth_cookie_name_upstream_1 $upstream_cookie_auth_cookie_name_1;
+
+                if ($auth_cookie ~* "(; .*)") {
+                    set $auth_cookie_name_0 $auth_cookie;
+                    set $auth_cookie_name_1 "auth_cookie_name_1=$auth_cookie_name_upstream_1$1";
+                }
+
+                if ($auth_cookie_name_upstream_1) {
+                    add_header Set-Cookie $auth_cookie_name_0;
+                    add_header Set-Cookie $auth_cookie_name_1;
+                }
+
+                proxy_pass http://$upstream_uri;
+            }
+        }
+    }
+
+
+
+
